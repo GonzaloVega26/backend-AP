@@ -8,6 +8,7 @@ import com.portfolio.PortfolioGV.entity.Person;
 import com.portfolio.PortfolioGV.interfaces.IPersonService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,23 +29,26 @@ public class PersonController {
     
     @Autowired IPersonService iPersonService;
     
-    @GetMapping("person/get-all")
-    public List<Person> getPerson(){
-        return iPersonService.getPerson();
+    @GetMapping("person/get-one")
+    public Person getOnePerson(){
+        Person person = iPersonService.findPerson((long) 1); //There is only one person in database
+        return person;
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("person/create")
     public String createPerson(@RequestBody Person person){
         iPersonService.savePerson(person);
         return "Succesfully Created";
     }
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("person/delete/{id}")
     public String deletePerson(@PathVariable Long id){
         iPersonService.deletePerson(id);
         return "Succesfully Deleted";
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("person/update/{id}")
     public Person updatePerson(@PathVariable Long id, 
             @RequestParam("name") String newName,
@@ -61,9 +65,5 @@ public class PersonController {
         
     }
     
-    @GetMapping("person/get-one")
-    public Person getOnePerson(){
-        Person person = iPersonService.findPerson((long) 1); //There is only one person in database
-        return person;
-    }
+    
 }

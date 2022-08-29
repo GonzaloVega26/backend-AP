@@ -15,17 +15,24 @@ import lombok.Setter;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     
-    @NotNull
-    @Size(min = 1, max = 50, message = "Enter valid name")
     private String name;
-    
-    @NotNull
-    @Size(min = 1, max = 50, message = "Enter valid firstname")
-    private String firstName;
-    
-    private String img;
+    private String title;
+    private String about;
+    private String imgURL;
+    private String bannerURL;
+
+    public Person() {
+    }
+
+    public Person(String name, String title, String about, String imgURL, String bannerURL) {
+        this.name = name;
+        this.title = title;
+        this.about = about;
+        this.imgURL = imgURL;
+        this.bannerURL = bannerURL;
+    }
     
     
     

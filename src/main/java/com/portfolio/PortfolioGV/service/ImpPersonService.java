@@ -5,7 +5,6 @@
 package com.portfolio.PortfolioGV.service;
 
 import com.portfolio.PortfolioGV.entity.Person;
-import com.portfolio.PortfolioGV.interfaces.IPersonService;
 import com.portfolio.PortfolioGV.repository.IPersonRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +15,30 @@ import org.springframework.stereotype.Service;
  * @author gonzalo
  */
 @Service
-public class ImpPersonService implements IPersonService {
+public class ImpPersonService {
     @Autowired IPersonRepository  iPersonRepository;
     
-    @Override
+    
     public List<Person> getPerson() {
         List<Person> person = iPersonRepository.findAll();
         return person;
     }
 
-    @Override
+    
     public void savePerson(Person person) {
         iPersonRepository.save(person);
     }
 
-    @Override
-    public void deletePerson(Long id) {
+    
+    public void deletePerson(int id) {
         iPersonRepository.deleteById(id);
     }
 
-    @Override
-    public Person findPerson(Long id) {
+    
+    public Person findPerson(int id) {
         Person person = iPersonRepository.findById(id).orElse(null);
         return person;
     }
+
     
 }

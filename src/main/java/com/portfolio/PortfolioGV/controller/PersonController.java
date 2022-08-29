@@ -4,19 +4,18 @@
  */
 package com.portfolio.PortfolioGV.controller;
 
+import com.portfolio.PortfolioGV.DTO.DtoPerson;
 import com.portfolio.PortfolioGV.entity.Person;
-import com.portfolio.PortfolioGV.interfaces.IPersonService;
-import java.util.List;
+import com.portfolio.PortfolioGV.security.controller.PMessage;
+import com.portfolio.PortfolioGV.service.ImpPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,45 +24,48 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/person")
 public class PersonController {
     
-    @Autowired IPersonService iPersonService;
+    @Autowired ImpPersonService impPersonService;
     
-    @GetMapping("person/get-one")
-    public Person getOnePerson(){
-        Person person = iPersonService.findPerson((long) 1); //There is only one person in database
-        return person;
+    @GetMapping("/get-one")
+    public ResponseEntity<Person> getOnePerson(){
+        
+        Person person = impPersonService.findPerson(1);
+        return new ResponseEntity(person,HttpStatus.OK);
+    }
+   
+    @PutMapping("/update-person")
+    public ResponseEntity<?> updatePerson(@RequestBody DtoPerson dtoPerson){
+        
+        if(dtoPerson.getName().isBlank()){
+             return new ResponseEntity(new PMessage("Name of Person is Required"),HttpStatus.BAD_REQUEST);
+        }
+        if(dtoPerson.getTitle().isBlank()){
+             return new ResponseEntity(new PMessage("Title of Person is Required"),HttpStatus.BAD_REQUEST);
+        }
+        if(dtoPerson.getAbout().isBlank()){
+             return new ResponseEntity(new PMessage("About of Person is Required"),HttpStatus.BAD_REQUEST);
+        }
+        if(dtoPerson.getImgURL().isBlank()){
+             return new ResponseEntity(new PMessage("Profile Photo of Person is Required"),HttpStatus.BAD_REQUEST);
+        }
+        if(dtoPerson.getBannerURL().isBlank()){
+             return new ResponseEntity(new PMessage("Banner is Required"),HttpStatus.BAD_REQUEST);
+        }
+        
+       
+        Person person = impPersonService.findPerson(1); //Only one person will be created;
+        person.setName(dtoPerson.getName());
+        person.setTitle(dtoPerson.getTitle());
+        person.setAbout(dtoPerson.getAbout());
+        person.setImgURL(dtoPerson.getImgURL());
+        person.setBannerURL(dtoPerson.getBannerURL());
+        impPersonService.savePerson(person);
+        return new ResponseEntity(new PMessage("The Person was updated succesfully"),HttpStatus.OK);
     }
     
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("person/create")
-    public String createPerson(@RequestBody Person person){
-        iPersonService.savePerson(person);
-        return "Succesfully Created";
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("person/delete/{id}")
-    public String deletePerson(@PathVariable Long id){
-        iPersonService.deletePerson(id);
-        return "Succesfully Deleted";
-    }
-    
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("person/update/{id}")
-    public Person updatePerson(@PathVariable Long id, 
-            @RequestParam("name") String newName,
-            @RequestParam("firstName") String newFirstName,
-            @RequestParam("img") String newImg){
-        Person person = iPersonService.findPerson(id);
-        person.setName(newName);
-        person.setFirstName(newFirstName);
-        person.setImg(newImg);
-        
-        iPersonService.savePerson(person);
-        
-        return person;
-        
-    }
     
     
 }

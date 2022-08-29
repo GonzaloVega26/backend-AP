@@ -12,7 +12,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,7 +74,8 @@ public class ExperienceController {
              return new ResponseEntity(new PMessage("Name of Experience is Required"),HttpStatus.BAD_REQUEST);
         }
         
-        if(impExperienceService.existsByName(dtoExperience.getName())){
+        if(impExperienceService.existsByName(dtoExperience.getName()) && 
+                impExperienceService.getExperienceByName(dtoExperience.getName()).get().getId() != id){
              return new ResponseEntity(new PMessage("The Experience is already created"),HttpStatus.BAD_REQUEST);
         }
         Experience experience = impExperienceService.getExperienceByID(id).get();

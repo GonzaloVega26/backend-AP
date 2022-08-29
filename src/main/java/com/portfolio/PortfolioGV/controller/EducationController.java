@@ -73,7 +73,8 @@ public class EducationController {
              return new ResponseEntity(new PMessage("Name of Education is Required"),HttpStatus.BAD_REQUEST);
         }
         
-        if(impEducationService.existsByName(dtoEducation.getName())){
+        if(impEducationService.existsByName(dtoEducation.getName()) && 
+                impEducationService.getEducationByName(dtoEducation.getName()).get().getId() != id){
              return new ResponseEntity(new PMessage("The Education is already created"),HttpStatus.BAD_REQUEST);
         }
         Education education = impEducationService.getEducationByID(id).get();
